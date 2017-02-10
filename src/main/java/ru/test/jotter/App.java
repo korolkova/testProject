@@ -16,20 +16,6 @@ import ru.test.jotter.repository.UserRepository;
 @EnableAutoConfiguration
 @ComponentScan
 public class App{
-
-	/*private static final Logger logger = LoggerFactory.getLogger(App.class);
-		
-	
-	@Autowired()
-	private UserRepository userRepository;
-	
-	
-	@RequestMapping(value="remove")
-	public void removeUser(@RequestParam("id") Integer id){
-		
-		this.userRepository.delete((long)id);
-		logger.info("removed user with id = "+id);
-	}*/
 		
     public static void main(String[] args) throws Exception {
         SpringApplication.run(App.class, args);       
