@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableAutoConfiguration
 @ComponentScan
 public class App{
-		
+	
+	
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(App.class, args);       
-    }
+        SpringApplication.run(App.class, args);
+    } 
 }

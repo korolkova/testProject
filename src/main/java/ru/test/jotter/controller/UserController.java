@@ -1,8 +1,14 @@
 package ru.test.jotter.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.stereotype.Controller;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +21,7 @@ import ru.test.jotter.model.User;
 
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -24,12 +30,17 @@ public class UserController {
 	private UserRepository userRepository;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public Iterable<User> findAllUsers(){
+	public List<User> findAllUsers(){
+		logger.info("controller");
+		List<User> list=new ArrayList<User>();
 		Iterable<User> userList=this.userRepository.findAll();
-		return userList;		
+		for (User user : userList) {
+			list.add(user);
+		}
+		return list;		
 	}
 	
-	@RequestMapping(value="/{id}")
+	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public User findOneUser(@PathVariable("id") Long id){
 		User user=this.userRepository.findOne(id);
 		if(checkUser(id)){
@@ -41,7 +52,7 @@ public class UserController {
 		}
 	}
 	
-	@RequestMapping(value="remove/{id}")
+	@RequestMapping(value="remove/{id}",  method=RequestMethod.DELETE)
 	public void removeUser(@PathVariable("id") Long id){
 		
 		if(checkUser(id)){
@@ -56,7 +67,7 @@ public class UserController {
 	@RequestMapping(value="add", method=RequestMethod.POST)
 	public void addUser(@RequestBody User newUser){
 		User user=this.userRepository.save(newUser);
-		logger.info("saved user: " + user);
+		logger.info("saves new user with id = " + user.getId());
 	}
 	
 	private boolean checkUser(long id){

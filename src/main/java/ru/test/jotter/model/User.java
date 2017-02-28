@@ -8,6 +8,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.context.annotation.ComponentScan;
+
+@ComponentScan
 @Entity
 @Table(name = "users")
 public class User{
@@ -24,13 +27,12 @@ public class User{
     @Column(name = "email", nullable = true, insertable = true, updatable = true, length = 64)
 	private String email;
 	
-	public User(int id, String name, String email){
+	public User(long id, String name, String email){
 		this.id=id;
 		this.name=name;
 		this.email=email;
 	}
 	public User(){
-		this.id=-1;
 		this.name=null;
 		this.email=null;
 	}
