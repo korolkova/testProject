@@ -80,7 +80,6 @@ public class UserControllerTest {
  
         /*verify(userRepository, times(1)).findAll();
         verifyNoMoreInteractions(userRepository);*/
-        logger.info("!!!!");
 	}	
 }
 

@@ -31,7 +31,6 @@ public class UserController {
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public List<User> findAllUsers(){
-		logger.info("controller");
 		List<User> list=new ArrayList<User>();
 		Iterable<User> userList=this.userRepository.findAll();
 		for (User user : userList) {
