@@ -1,10 +1,10 @@
 package ru.test.jotter;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -15,15 +15,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,10 +28,8 @@ import ru.test.jotter.repository.UserRepository;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserController.class)
-//@ComponentScan
 @ContextConfiguration(classes=UserController.class)
 public class UserControllerTest {
-	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -62,10 +54,13 @@ public class UserControllerTest {
         userList.add(secondUser);
         
 		when(userRepository.findAll()).thenReturn(userList);	
+		when(userRepository.findOne(this.firstUser.getId())).thenReturn(firstUser);
+		when(userRepository.exists(this.firstUser.getId())).thenReturn(true);
+		when(userRepository.exists(3L)).thenReturn(false);
     }
 			
 	@Test
-    public void findAll() throws Exception {
+    public void findAllUsers() throws Exception {
 
         mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
@@ -75,11 +70,32 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$[1].id", is(2)))
                 .andExpect(jsonPath("$[1].name", is("TestName2")))
                 .andExpect(jsonPath("$[1].email", is("TestEmail2")));
+	}
+	
+	@Test
+    public void userNotFound() throws Exception {
         
-        
- 
-        /*verify(userRepository, times(1)).findAll();
-        verifyNoMoreInteractions(userRepository);*/
-	}	
+		mockMvc.perform(get("/users/3"))
+                .andExpect(status().isNotFound());
+    }
+	
+	@Test
+    public void findOneUser() throws Exception {
+		
+		mockMvc.perform(get("/users/1"))
+		        .andExpect(status().isOk())
+		        .andExpect(jsonPath("$.id", is(1)))
+		        .andExpect(jsonPath("$.name", is("TestName1")))
+		        .andExpect(jsonPath("$.email", is("TestEmail1")));
+	}
+	
+	@Test
+    public void removeUser() throws Exception {
+		
+		mockMvc.perform(delete("/users/remove/1"))
+		        .andExpect(status().isOk());
+		
+		verify(userRepository, times(1)).delete(1L);
+	}
 }
 
